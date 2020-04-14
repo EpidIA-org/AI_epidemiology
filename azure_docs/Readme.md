@@ -1,7 +1,7 @@
-## How to setup dev environment
+# How to setup dev environment
 
 ## Dev machines
-sadas
+
 - covidia-dev-temp.westeurope.cloudapp.azure.com (temporary)
   - Standard DS15 v2 (20 vcpus, 140 GiB memory)
   - Linux (ubuntu 18.04)
@@ -83,3 +83,26 @@ https://docs.microsoft.com/en-us/azure/machine-learning/data-science-virtual-mac
 
 Data Science with a Linux Data Science Virtual Machine in Azure:
 https://docs.microsoft.com/en-us/azure/machine-learning/data-science-virtual-machine/linux-dsvm-walkthrough
+
+## Useful Tools
+
+### Azure Portal (not a tool, just a link)
+https://portal.azure.com
+
+### Azure Storage Explorer
+https://azure.microsoft.com/en-us/features/storage-explorer/
+
+As all our data will be stored in an Azure Storage we created for this, this allows you to explore data and upload or download files.
+
+The storage account currently being used for IA is: **covidiastorage**
+
+### Azure Batch Explorer
+https://azure.github.io/BatchExplorer/
+
+This is only required if you are using the Azure Batch service which we currently believe is the best choice for the simulation models.
+
+Azure Batch: https://azure.microsoft.com/en-us/services/batch/
+Documentation: https://docs.microsoft.com/en-us/azure/batch/batch-technical-overview
+
+
+
