@@ -101,6 +101,7 @@ https://azure.github.io/BatchExplorer/
 This is only required if you are using the Azure Batch service which we currently believe is the best choice for the simulation models.
 
 Azure Batch: https://azure.microsoft.com/en-us/services/batch/
+
 Documentation: https://docs.microsoft.com/en-us/azure/batch/batch-technical-overview
 
 
