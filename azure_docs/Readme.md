@@ -6,7 +6,6 @@
   - Standard DS15 v2 (20 vcpus, 140 GiB memory)
   - Linux (ubuntu 18.04)
   - 150 Gb SSD (can be increased)
-  
 - covidia-dev-01.francecentral.cloudapp.azure.com (not available yet)
 - covidia-dev-02.francecentral.cloudapp.azure.com (not available yet)
 
