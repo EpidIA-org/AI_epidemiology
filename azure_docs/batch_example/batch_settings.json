@@ -1,0 +1,7 @@
+{
+    "poolId" : "SimulationPoolInfluenza",
+    "jobIdPrefix" : "SimulationJobInfluenza",
+    "lowPriorityVmCount": 5,
+    "dedicatedVmCount": 0,
+    "vmSize" : "STANDARD_A1_V2"
+}
