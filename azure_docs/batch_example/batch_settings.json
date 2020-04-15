@@ -1,5 +1,5 @@
 {
-    "poolId" : "SimulationPoolInfluenza",
+    "poolId" : "SimulationPoolInfluenzaTest",
     "jobIdPrefix" : "SimulationJobInfluenza",
     "lowPriorityVmCount": 5,
     "dedicatedVmCount": 0,
