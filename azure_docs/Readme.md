@@ -30,12 +30,12 @@ sudo usermod -s /bin/bash <your-username>
 
 #### Ensure you can SSH into the machine by running:
 ```
-ssh <your-username>@covidia-dev-01.westeurope.cloudapp.azure.com
+ssh <your-username>@covidia-dev-01.francecentral.cloudapp.azure.com
 ```
 User Passw0rd! as the password - it should ask you to change your password on first login
 
 #### Ensure you can reach Jupyter Hub on the machine:
-  - Example: https://covidia-dev-01.westeurope.cloudapp.azure.com:8000 
+  - Example: https://covidia-dev-01.francecentral.cloudapp.azure.com:8000 
   - notice the **https**
   - use the same username and password as before
 
@@ -48,7 +48,7 @@ User Passw0rd! as the password - it should ask you to change your password on fi
 
 On the dev machine apply the following steps using the alias you just created:
 ```
-ssh <your-username>@covidia-dev-01.westeurope.cloudapp.azure.com
+ssh <your-username>@covidia-dev-01.francecentral.cloudapp.azure.com
 cd notebooks
 git clone https://github.com/Covid-IA/AI_epidemiology.git
 git config --global user.email "email@example.com"
@@ -67,7 +67,7 @@ The first time you commit or try to pull changes from the repository you will be
 If you use VS Code as an IDE, you can run it in your local machine and use the **Remote-SSH: Connect to Host** command to work with your local workstation but keep the code running on the remote machine:
 
 1. Ctrl+Shift+P -> Remote-SSH: Connect to Host
-2. Enter: your-user@covidia-dev-01.westeurope.cloudapp.azure.com
+2. Enter: your-user@covidia-dev-01.francecentral.cloudapp.azure.com
 3. Once done, choose "Open Folder" and choose the: /home/your-user/notebooks/AI_epidemiology/
 4. When you do "New Terminal" it will open a remote terminal on the machine, allowing you to run your code there.
 
