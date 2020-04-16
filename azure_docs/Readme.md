@@ -34,10 +34,19 @@ ssh <your-username>@covidia-dev-01.francecentral.cloudapp.azure.com
 ```
 User Passw0rd! as the password - it should ask you to change your password on first login
 
+> When connecting you will see a warning like this: 
+*the authenticity of host 'covidia-dev-01.francecentral.cloudapp.azure.com (52.143.132.20)' can't be established.
+ECDSA key fingerprint is SHA256:8azYTDACgBNuCADcbPeMDv8bgk0qUkVsDiqEIecE7Ig.*
+
+This is normal and can be ignored. Just say 'yes'.
+The reason is the DNS name is not validated by a certificate, but it's easier to remember a machine name than an IP address
+
 #### Ensure you can reach Jupyter Hub on the machine:
   - Example: https://covidia-dev-01.francecentral.cloudapp.azure.com:8000 
   - notice the **https**
   - use the same username and password as before
+  
+> You will get a browser warning about the authenticity of the server (again the missing DNS certificate). Choose to progress anyway, there is no risk.
 
 ### GitHub access
 
