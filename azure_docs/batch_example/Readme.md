@@ -8,7 +8,7 @@ Everything can be setup on the portal, but a good practice is to automate all st
 
 Inside the sample_application folder there is a Python application built with no information of Azure Batch or Azure Storage. It simply reads one of the files in the input_data folder, applies some transformations and writes an output file. It's a dummy application built as an example. Nevertheless, we can make this application run in Azure Batch and retrieve/store data from Azure Storage without changing its code.
 
-## Running the demo
+## Running the demo (1/2)
 
 While executing the **Covidia Batch** notebook several steps are taken:
 
@@ -25,6 +25,45 @@ While executing the **Covidia Batch** notebook several steps are taken:
 6. We create a Job to gather all our tasks - a Job Preparation Task is defined to download the sample_application from Azure Storage, decompress it and copy it to a known location. We also install any python packages required by the application through it's requirements.txt file
 7. We create one task per file in the input_data folder, essentially creating 60 tasks. Each task consists of a single execution of the sample_application passing one of the files as input. The output files are also collected and automatically sent to Azure Storage and kept on the output container
 8. After waiting for all tasks to complete, we clean up the job and pool to drop the cost to zero.
+
+## Running the demo (2/2)
+
+A slightly different approach is shown in the covidia_batch_process.py file. In this case, instead of zipping the sample application and uploading it to Azure Storage, we instead run **git clone** on the Azure Batch node machines to pull this repository and "install" the application locally.
+
+The only complexity is, given that this is a private repo we need to authenticate when running git operations. For that, we need to create an SSH key first (public/private pair), add the public part to the GitHub repo and add make sure each node of the pool has a copy of the private key. Using a username and password will always require the password to be added interactively, which prevents automation, so SSH key is the only viable option.
+
+Before running the script do the following steps
+
+1. Execute the following command on a terminal window, making sure you are on the same folder as these instructions:
+```bash
+mkdir ssh_keys
+ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+```
+
+2. When prompted to "Enter a file in which to save the key", choose ssh_keys/myKey
+
+3. No need to add a password (just press enter)
+
+4. Open the ssh_keys/myKey.pub in a text editor and copy the contents. If you're working on the remote machine, you can cat the output to the shell, select it with the mouse and press Ctrl+Shift+C
+
+```bash
+cat ssh_keys/myKey.pub
+``` 
+
+5. Go to GitHub, click your profile photo, click Settings and then choose the **SSH and GPG keys** menu
+
+6. Click **New SSH key**
+
+7. Add a title such as "Batch key" and paste the key into the "Key" field
+
+8. Click **Add SSH Key**
+
+This takes care of the public part of the key. Now we need to make sure we copy the private key to each node. We'll do this through Azure Storage and adding the private key as a reference file for the Job.
+
+1. Copy the private key to the batch_resources folder
+```
+cp ssh_keys/myKey batch_resources
+```
 
 ## How to adapt to your own Script
 
