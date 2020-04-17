@@ -79,7 +79,19 @@ git_app_folder = "azure_docs/batch_example/sample_application"
 ## How to adapt to your own Script
 
 - It's easy to change the notebook to compress and upload your application instead of the sample_application.
-- Your application should include a requirements.txt file with all the packages that are needed.
-- Change the settings.json file to define the size of the pool, name of the jobs, etc.
+- If you're using the python script (not the notebook), this repo will be cloned to the target machines so you just need to make sure your app folder is being correctly references in the **git_app_folder** variable.
+- Your application should include a requirements.txt file with all the packages that are needed as we run that in preparation before any tasks are executed.
 - The only part that really needs changing is the Tasks generation as that is specific to your application (e.g which arguments to pass, how outputs are collected, etc.)
 
+## Defining the Azure Batch Pool
+Change the batch_settings.json file to define the size of the pool, name of the jobs, etc. The current machine being deployed (STANDARD_A1_V2) is fairly small so you may need a bigger machine.
+
+However, if your script doesn't take advantage of multiple cores there is no need to grow the machine significantly from a vCPU perspective and it's better to increase the number of machines. 
+
+For instance, if your application can only really use one core (like SVMs in SciKit-Learn) it doesn't matter if it runs on a 64 CPU machine, it will take the same time as a 1 CPU machine. If that is the case, it's best to split the workload in different tasks and rely on paralelism (like creating a pool with 64 nodes with 1 CPU each to process the same data).
+
+If your script can use multiple cores than using a large machine is useful. To check the sizes of machines currently available for this subscription on the France Central datacenter, you can refer to this table:
+
+![VM sizes](imgs/vmsizes.PNG)
+
+The costs wil be different as, currently, the batch definitions are using low priority VMs. These are priced much cheaper than full price and are very good for batch operations. 
