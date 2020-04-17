@@ -65,6 +65,17 @@ This takes care of the public part of the key. Now we need to make sure we copy 
 cp ssh_keys/myKey batch_resources
 ```
 
+2. The script will make sure to copy this key to Azure Storage and add it to the Job Preparation task.
+
+3. To configure the job preparation task, make sure to check the following variables in the **covidia_batch_process.py** script:
+
+```python
+git_repo_url = "git@github.com:Covid-IA/AI_epidemiology.git"
+git_branch = "dev"
+git_repo_name = "AI_epidemiology"
+git_app_folder = "azure_docs/batch_example/sample_application"
+```
+
 ## How to adapt to your own Script
 
 - It's easy to change the notebook to compress and upload your application instead of the sample_application.
