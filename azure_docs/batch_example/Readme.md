@@ -86,6 +86,16 @@ git_app_folder = "azure_docs/batch_example/sample_application"
 ## Defining the Azure Batch Pool
 Change the batch_settings.json file to define the size of the pool, name of the jobs, etc. The current machine being deployed (STANDARD_A1_V2) is fairly small so you may need a bigger machine.
 
+```json
+{
+    "poolId" : "SimulationPoolInfluenzaTest",
+    "jobIdPrefix" : "SimulationJobInfluenza",
+    "lowPriorityVmCount": 5,
+    "dedicatedVmCount": 0,
+    "vmSize" : "STANDARD_A1_V2"
+}
+```
+
 However, if your script doesn't take advantage of multiple cores there is no need to grow the machine significantly from a vCPU perspective and it's better to increase the number of machines. 
 
 For instance, if your application can only really use one core (like SVMs in SciKit-Learn) it doesn't matter if it runs on a 64 CPU machine, it will take the same time as a 1 CPU machine. If that is the case, it's best to split the workload in different tasks and rely on paralelism (like creating a pool with 64 nodes with 1 CPU each to process the same data).
