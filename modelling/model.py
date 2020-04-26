@@ -2,6 +2,7 @@
 Model implementation
 """
 import argparse
+import datetime
 import json
 import os
 
@@ -15,12 +16,16 @@ from utils.viz_utils import savefig
 
 class Model(object):
     """
-    Model object 
-    read parameters of model from config file
-    resolve ode
-    save figure and csv file of the solution
-    """
+    Model class :
+    - read parameters of model from config file
+    - resolve ode
+    - save figure and csv file of the solution
 
+    model_config_json (str): filename of config file (json format)
+    output_folder (str): path where to save fig and predictions
+    gradients_computations_funct (funct) : function that computes
+                                           gradient of ode
+    """
     def __init__(self, model_config_json, output_folder,
                  gradients_computations_funct):
 
@@ -52,20 +57,17 @@ class Model(object):
 
     def init_model_parameters(self):
         """initialize all parameters of model"""
+        # read model name
         self.model_name = self.config["name"]
 
-        self.nb_dep = 1
-        if "nb_dep" in self.config["params"].keys():
-            self.nb_dep = self.config["params"]["nb_dep"]
+        # read departements
+        self.deps = self.config["params"]["deps"]
+        self.nb_deps = len(self.config["params"]["deps"])
 
+        # read variable names
         self.values_names = self.config["values_names"]
-        if self.nb_dep > 1:
-            values_names = []
-            for val in self.values_names:
-                for i in range(self.nb_dep):
-                    values_names.append("%s_%d" % (val, i))
-            self.values_names = values_names
 
+        # read initial values
         initial_values = \
             [self.config["initial_values"][name]
              for name in self.config["values_names"]]
@@ -73,16 +75,24 @@ class Model(object):
                                for sublist in initial_values
                                for item in sublist]
 
-        assert(len(self.values_names) == len(self.initial_values))
+        assert(len(self.values_names) * self.nb_deps ==
+               len(self.initial_values))
 
+        # read ode parameters
         self.params = self.config["params"]
-        self.start_day = self.config["start_day"]
-        self.end_day = self.config["end_day"]
+
+        self.start_day = datetime.datetime.strptime(
+            self.config["start_day"], '%d-%m-%Y')
+        self.end_day = datetime.datetime.strptime(
+            self.config["end_day"], '%d-%m-%Y')
+        self.nb_days = (self.end_day - self.start_day).days
+        self.days = [self.start_day + datetime.timedelta(days=i)
+                     for i in range(self.nb_days)]
         self.sampled_pts_nb = self.config["sampled_pts_nb"]
 
         self.times = np.linspace(
-            self.start_day,
-            self.end_day,
+            0,
+            self.nb_days,
             self.sampled_pts_nb)
 
     def resolution(self):
@@ -98,7 +108,7 @@ class Model(object):
             self.output_folder, "%s_model_fig.png" % self.model_name)
         savefig(filename, self.predictions,
                 self.times, self.values_names,
-                self.model_name)
+                self.deps, self.model_name)
 
     def save_predictions(self):
         """save preditions"""
@@ -106,7 +116,7 @@ class Model(object):
                                 "%s_model_predictions.csv" % self.model_name)
 
         save_predictions_csv(self.predictions, self.values_names, self.times,
-                             self.start_day, self.end_day,
+                             self.days, self.deps,
                              filename)
 
     def run(self):

@@ -14,23 +14,51 @@ def read_json_file(filename):
 
 
 def save_predictions_csv(predictions, values_names, times,
-                         start_day, end_day,
+                         days, deps,
                          output_filename):
-    columns = ["jour"] + values_names
+    """
+    save outputs as a csv file
+    with the following columns :
+    [date, dep, var1, var2, ...]
+
+    predictions (array): predictions of model
+    values_names (list): variables names
+    times (array): time series of resolution
+    days (list): list of days
+    deps (list): list of departement
+    output_filename (str): path where to save csv
+    """
+    values_deps = ["%s_%s" % (val, dep)
+                   for val in values_names for dep in deps]
+    columns = ["date"] + values_deps
     sampled_pts_nb = len(times)
-    final_res = pd.DataFrame(
-        np.zeros((sampled_pts_nb,
-                  len(columns))),
-        columns=columns)
-
-    final_res["jour"] = times
-    final_res[values_names] = predictions
-
-    step = int(sampled_pts_nb / (end_day - start_day))
+    nb_days = len(days)
+    step = int(sampled_pts_nb / (nb_days - 1))
     indices = list(range(0,
                          sampled_pts_nb,
                          step))
-    final_res = final_res.iloc[indices, :]
-    final_res.jour = final_res.jour.astype(np.int)
 
-    final_res.to_csv(output_filename, index=False)
+    assert(len(indices) == nb_days)
+
+    df_res = pd.DataFrame(
+        np.zeros((sampled_pts_nb,
+                  len(columns))),
+        columns=columns)
+    df_res[values_deps] = predictions
+    df_res = df_res.iloc[indices, :]
+    df_res["date"] = days
+
+    columns = ["date"] + ["dep"] + values_names
+    df_final_res = pd.DataFrame()
+    for dep in deps:
+        df = pd.DataFrame(
+            np.zeros((nb_days,
+                      len(columns))),
+            columns=columns)
+        df["dep"] = dep
+        df["date"] = days
+        values = ["%s_%s" % (name, dep) for name in values_names]
+        df[values_names] = df_res[values].values
+        df_final_res = df_final_res.append(df)
+
+    df_final_res.to_csv(output_filename, index=False)

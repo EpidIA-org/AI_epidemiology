@@ -4,12 +4,13 @@
 	"initial_values" : {"S" : [0.9,0.9],
 						"I" : [0.1,0.1],
 					    "R" : [0.0, 0.0]},
-	"params" : {"nb_dep" : 2,
+	"params" : {
 				"nb_variables" : 3,
+				"deps" : [90, 91],
 				"beta" : [19,11],
 				"gamma" : [0.9,0.9],
 				"M_di_dj" : [0.0, 1, 0.00, 0.01]},
-	"start_day" : 0,
-	"end_day" : 20,
+	"start_day" : "01-01-2020",
+	"end_day" : "15-02-2020",
 	"sampled_pts_nb" : 10000
 }
