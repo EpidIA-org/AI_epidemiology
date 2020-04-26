@@ -2,68 +2,39 @@
 gradients computations functions for different model
 """
 
-def gradients_computations_SIRModel(data, t, params):
-    S, I, R = data
-    dS_dt = -params["beta"] * S * I
-    dI_dt = params["beta"] * S * I - params["gamma"] * I
-    dR_dt = params["gamma"] * I
-    return([dS_dt, dI_dt, dR_dt])
+import numpy as np
+
+def gradients_computations_SIRDepModel(data, t, params):
+    nb_dep = params["nb_dep"]
+
+    assert(len(data) == 3 * nb_dep)
+
+    S = np.array([data[i] for i in range(0 * nb_dep, 1 * nb_dep)])
+    I = np.array([data[i] for i in range(1 * nb_dep, 2 * nb_dep)])
+    R = np.array([data[i] for i in range(2 * nb_dep, 3 * nb_dep)])
+
+    beta = np.array(params["beta"])
+    gamma = np.array(params["gamma"])
+
+    M_di_dj = np.array(params["M_di_dj"]).reshape((nb_dep, nb_dep))
+
+    dS_dt = np.zeros(S.shape)
+    for i in range(nb_dep):
+        val = -beta[i] * S[i] * I[i]
+        for j in range(nb_dep):
+            val += -beta[j] * S[i] * M_di_dj[i,j] * I[j] + \
+                -beta[i] * S[i] * M_di_dj[i,j] * I[j]
+        dS_dt[i] = float(val) / nb_dep
+
+    dI_dt = - dS_dt - np.multiply(gamma,I)
 
 
-def gradients_computations_V1Model(data, t, params):
-    S_d1, S_d2, E_d1, E_d2, I_d1, I_d2, A_d1, A_d2, \
-        H_d1, H_d2, ICU_d1, ICU_d2, \
-        R_d1, R_d2, D_d1, D_d2 = data
+    dR_dt = np.multiply(gamma,I)
 
-    beta_d1 = params["beta_d1"]
-    beta_d2 = params["beta_d2"]
-    M_d1_d2 = params["M_d1_d2"]
-    M_d2_d1 = params["M_d1_d2"]
+    dydt = []
 
-    TE = params["TE"]
-    TI = params["TI"]
-    TH = params["TH"]
-    TA = params["TA"]
-    TICU = params["TICU"]
+    dydt.extend(list(dS_dt))
+    dydt.extend(list(dI_dt))
+    dydt.extend(list(dR_dt))
 
-    rho_d1 = params["rho_d1"]
-    lambda_d1 = params["lambda_d1"]
-    gamma_d1 = params["gamma_d1"]
-
-    rho_d2 = params["rho_d2"]
-    lambda_d2 = params["lambda_d2"]
-    gamma_d2 = params["gamma_d2"]
-
-    dS_d1_dt = -beta_d1 * S_d1 * (I_d1 + A_d1) + \
-        -beta_d2 * S_d1 * M_d1_d2 * (I_d2 + A_d2) + \
-        -beta_d1 * S_d1 * M_d1_d2 * (I_d2 + A_d2)
-
-    dS_d2_dt = -beta_d2 * S_d2 * (I_d2 + A_d2) + \
-        -beta_d1 * S_d2 * M_d1_d2 * (I_d1 + A_d1) + \
-        -beta_d2 * S_d2 * M_d2_d1 * (I_d1 + A_d1)
-
-    dE_d1_dt = dS_d1_dt - dS_d1_dt(t - TE)
-    dE_d2_dt = dS_d2_dt - dS_d2_dt(t - TE)
-
-    dI_d1_dt = dE_d1_dt - dE_d1_dt(t - TI)
-    dI_d2_dt = dE_d2_dt - dE_d2_dt(t - TI)
-
-    dH_d1_dt = rho_d1 * (dI_d1_dt - dI_d1_dt(t - TH))
-    dH_d2_dt = rho_d2 * (dI_d2_dt - dI_d2_dt(t - TH))
-
-    dICU_d1_dt = lambda_d1 * (dI_d1_dt - dI_d1_dt(t - TICU))
-    dICU_d2_dt = lambda_d2 * (dI_d2_dt - dI_d2_dt(t - TICU))
-
-    dA_d1_dt = (1 - lambda_d1 - rho_d1) * (dI_d1_dt - dI_d1_dt(t - TA))
-    dA_d2_dt = (1 - lambda_d2 - rho_d2) * (dI_d2_dt - dI_d2_dt(t - TA))
-
-    dD_d1_dt = gamma_d1 * dH_d1_dt(t - TH) + gamma_d1 * dICU_d1_dt(t - TICU)
-    dD_d2_dt = gamma_d2 * dH_d2_dt(t - TH) + gamma_d2 * dICU_d2_dt(t - TICU)
-
-    dR_d1_dt = 0
-    dR_d2_dt = 0
-
-    return([dS_d1_dt, dS_d2_dt, dE_d1_dt, dE_d2_dt,
-            dI_d1_dt, dI_d2_dt, dA_d1_dt, dA_d2_dt,
-            dH_d1_dt, dH_d2_dt, dICU_d1_dt, dICU_d2_dt,
-            dR_d1_dt, dR_d2_dt, dD_d1_dt, dD_d2_dt])
+    return(dydt)
