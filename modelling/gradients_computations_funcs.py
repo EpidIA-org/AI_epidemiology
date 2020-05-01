@@ -1,32 +1,9 @@
-# model
+"""
+gradients computations functions for different models
+"""
 
-in order the to run a simulation for a new model, you need to :
-
-1- write a config file that contains the parameters of the model according to this format
-
-```json
-{
-	"name" : "SIR_n_dep",
-	"values_names" : ["S", "I", "R"],
-	"initial_values" : {"S" : [0.9,0.9],
-						"I" : [0.1,0.1],
-					    "R" : [0.0, 0.0]},
-	"params" : {
-				"nb_variables" : 3,
-				"deps" : [90, 91],
-				"beta" : [19,11],
-				"gamma" : [0.9,0.9],
-				"M_di_dj" : [0.0, 1, 0.00, 0.01]},
-	"start_day" : "01-01-2020",
-	"end_day" : "15-02-2020",
-	"sampled_pts_nb" : 10000
-}
-```
-
-2- implement the gradients computations function of the model in gradients_computation_funcs.py according to this format :
-
-```python
 import numpy as np
+
 
 def gradients_computations_SIRDepModel(data, t, params):
     nb_deps = len(params["deps"])
@@ -52,13 +29,9 @@ def gradients_computations_SIRDepModel(data, t, params):
     dI_dt = - dS_dt - np.multiply(gamma, I)
     dR_dt = np.multiply(gamma, I)
 
-    return([list(dS_dt), list(dI_dt), list(dR_dt)])
-```
+    dydt = []
+    dydt.extend(list(dS_dt))
+    dydt.extend(list(dI_dt))
+    dydt.extend(list(dR_dt))
 
-3 - run in terminal :
-
-```bash 
-python model.py config/sir_modelling.json outputs/
-```
-
-you will find a figure and csv file of predictions in `outputs/` file 
+    return(dydt)
